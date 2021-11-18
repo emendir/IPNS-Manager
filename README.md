@@ -1,27 +1,38 @@
 # IPNS-Manager
-IPFS-Manager is a GUI program for managing [IPFS (Interplanetary File System)](https://ipfs.io) name keys. It's purpose is to make it easier to manage websites (and other content) hosted on IPFS with IPNS keys (IPFS Name System).
+IPFS-Manager is a GUI program for managing [IPFS (InterPlanetary File System)](https://ipfs.io) name keys. It's purpose is to make it easier to manage websites (and other content) hosted on IPFS with IPNS keys (IPFS Name System).
 
-Built with the PyQt5 wrapper for the Qt graphics framework and the IPFS-Toolkit API for IPFS. 
+Built with the [PyQt5](https://pypi.org/project/PyQt5/) wrapper for the Qt graphics framework and the [IPFS-Toolkit](https://github.com/emendir/IPFS-Toolkit-Python) API for IPFS. 
+
+## Prerequisite Knowledge and Understanding
+This program is built for people who work with IPFS and understand the basic concepts of how it works, including [IPNS (InterPlanetary Name System)](http://docs.ipfs.io.ipns.localhost:8080/concepts/ipns/).
 
 ## Installation
-You can download and run the binaries in the dist folder (Linux & Windows x86_64). If you are using a different operating system, you can run the program from source.
+You can download and run the binary in the dist folder if you're using a Linux x86_64 computer. If you are using a different operating system, you can run the program from source.
 
 ### Run from Source
-- This program is written in the Python programming language. Install it and its package manager pip.
-On debian-based linux systems, install with:
-`sudo apt install python3`  
-`sudo apt install python3-pip`
+- This program is written in the Python programming language. Install it and its package manager pip. Use at a version of at least 3.7.
+
+  On Debian-based Linux systems, install with:  
+  `sudo apt install python3`  
+  `sudo apt install python3-pip`
+
+  On windows, it is recommended not to install python from its app store as that has in some tests led to difficult-to-find-problems. Download it from the official website instead: https://python.org.
 
 - Install the Python packages (libraries) which this project depends on:
-`pip install PyQt5`  
-`pip install IPFS-Toolkit`
+  `pip install PyQt5`  
+  `pip install IPFS-Toolkit`
 
-On linux, also run:
-`sudo apt install pyqt5-tools-dev`
+  On Linux, also run:
+  `sudo apt install pyqt5-tools-dev`
 
-- Download the source code.
+- Download the source code:  
+  from IPFS: `ipfs get $(ipfs name resolve k2k4r8ksqdoku10pkm3ftt4d5c8svd9brfm22255uk3ho0sym169l8xi) -o IPNS-Manager`  
+  from Github: `git clone https://github.com/emendir/IPNS-Manager`
 - Make sure IPFS is running (`ifps daemon`), and run the project:  
-`python3 IPNS-Manager`
+`cd IPNS-Manager`  
+`python3 .`  
+or (on some systems)  
+`python .`
 
 
 ## Usage
@@ -62,4 +73,8 @@ Examples:
   The "Save" button saves your code to appdata. The "Update from Source" button however always executes the latest code you've written, regardless of whether it has been saved or not.
   To debug your code, run IPNS-Manager from a terminal window. All `print` statements in your code will be printed on the terminal.
 
-      
+# Links:
+Naturally, this project is also hosted on IPFS.
+
+Website: https://ipfs.io/ipns/k2k4r8m2dzqi5s8jm3shm77sr1728ex7bsds0fk6e9gkf2ld2f3mnhcy
+Source Code: https://ipfs.io/ipns/k2k4r8ksqdoku10pkm3ftt4d5c8svd9brfm22255uk3ho0sym169l8xi
