@@ -1,5 +1,5 @@
 # IPNS-Manager
-IPFS-Manager is a GUI program for managing [IPFS (InterPlanetary File System)](https://ipfs.io) name keys. It's purpose is to make it easier to manage websites (and other content) hosted on IPFS with IPNS keys (IPFS Name System).
+IPFS-Manager is a GUI program for managing [IPFS (InterPlanetary File System)](https://ipfs.io) name keys. Its purpose is to make it easier to manage websites (and other content) hosted on IPFS with IPNS keys (IPFS Name System).
 
 Built with the [PyQt5](https://pypi.org/project/PyQt5/) wrapper for the Qt graphics framework and the [IPFS-Toolkit](https://github.com/emendir/IPFS-Toolkit-Python) API for IPFS. 
 
