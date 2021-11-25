@@ -7,7 +7,7 @@ Built with the [PyQt5](https://pypi.org/project/PyQt5/) wrapper for the Qt graph
 This program is built for people who work with IPFS and understand the basic concepts of how it works, including [IPNS (InterPlanetary Name System)](http://docs.ipfs.io.ipns.localhost:8080/concepts/ipns/).
 
 ## Installation
-You can download and run the binary in the dist folder if you're using a Linux x86_64 computer. If you are using a different operating system, you can run the program from source.
+You can download and run the binary in the dist folder if you're using a Linux x86_64 computer (tested on Ubuntu 20). If you are using a different operating system, you can run the program from source.
 
 ### Run from Source
 - This program is written in the Python programming language. Install it and its package manager pip. Use at a version of at least 3.7.
@@ -18,22 +18,24 @@ You can download and run the binary in the dist folder if you're using a Linux x
 
   On windows, it is recommended not to install python from its app store as that has in some tests led to difficult-to-find-problems. Download it from the official website instead: https://python.org.
 
-- Install the Python packages (libraries) which this project depends on:
-  `pip install PyQt5`  
-  `pip install IPFS-Toolkit`
+- Install the Python packages (libraries) which this project depends on:  
+  `pip install PyQt5>=5.12`  
+  `pip install IPFS-Toolkit>=0.1.4`
+  (you may need to use `pip3` instead of `pip` in these two commands)
+  
 
-  On Linux, also run:
-  `sudo apt install pyqt5-tools-dev`
+  On Linux, you may need to first run:
+  `sudo apt install pyqt5-dev`
 
 - Download the source code:  
   from IPFS: `ipfs get $(ipfs name resolve k2k4r8ksqdoku10pkm3ftt4d5c8svd9brfm22255uk3ho0sym169l8xi) -o IPNS-Manager`  
   from Github: `git clone https://github.com/emendir/IPNS-Manager`
 - Make sure IPFS is running (`ifps daemon`), and run the project:  
-`cd IPNS-Manager`  
-`python3 .`  
+`python3 IPNS-Manager`  
 or (on some systems)  
-`python .`
+`python IPNS-Manager`
 
+Tested on Ubuntu-20 with Python3.8 and ipfs v0.9.1.
 
 ## Usage
 ### Adding Sites
@@ -76,5 +78,5 @@ Examples:
 # Links:
 Naturally, this project is also hosted on IPFS.
 
-Website: https://ipfs.io/ipns/k2k4r8m303h5pjaz7m3fckizzr6lne00ha6kcs97n20ivg9bpm1eu072
+Website: https://ipfs.io/ipns/k2k4r8m303h5pjaz7m3fckizzr6lne00ha6kcs97n20ivg9bpm1eu072  
 Source Code: https://ipfs.io/ipns/k2k4r8ksqdoku10pkm3ftt4d5c8svd9brfm22255uk3ho0sym169l8xi
