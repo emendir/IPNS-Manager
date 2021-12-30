@@ -50,30 +50,30 @@ Make sure IPFS is running on your computer before you run this program.
 
 ### Adding Custom Code
 You can add your own Python code to be executed whenever you press a Site's "Update from Source". At the bottom of the IPNS-Manager window, press the "Code" tab. This will open a new view with a field in which you can paste a small python script. In this code, you can access the newly updated Site's data using the following variables:
-
-    source_path  
-    old_ipfs_cid  
-    new_ipfs_cid  
-    ipns_key_id  
-    ipns_key_name 
-
+```python
+source_path  
+old_ipfs_cid  
+new_ipfs_cid  
+ipns_key_id  
+ipns_key_name 
+```
 You also have access to the [IPFS-Toolkit](https://ipfs.io/ipns/k2k4r8m2dzqi5s8jm3shm77sr1728ex7bsds0fk6e9gkf2ld2f3mnhcy) library (which contains the `IPFS_API`, `IPFS_DataTransmission` and `IPFS_LNS` modules), as well as all global variables in the LoadUI.py script from IPNS-Manager's source code.
 
 ![](Screenshots/Code.png)
 
 Examples:
+```python
+# Write to log file:
+from datetime import datetime
+if new_ipfs_cid != old_ipfs_cid:
+    with open(os.path.join(appdata_dir, "log"), "a+") as log_file:  # appdata_dir is a global varibale from LoadUI.py
+        log_file.write(f"{datetime.now()}: {ipns_key_name}: {new_ipfs_cid}\n")
 
-    # Write to log file:
-    from datetime import datetime
-    if new_ipfs_cid != old_ipfs_cid:
-        with open(os.path.join(appdata_dir, "log"), "a+") as log_file:  # appdata_dir is a global varibale from LoadUI.py
-            log_file.write(f"{datetime.now()}: {ipns_key_name}: {new_ipfs_cid}\n")
-
-    # ssh into an always-online-computer with ipfs installed and pin the updated Site's CID  
-    os.system(f"ssh -t -q admin@IP_ADDRESS 'ipfs pin rm {old_ipfs_cid}; ipfs pin add {new_ipfs_cid}; ipfs name resolve {ipns_key_id}'")
-  
-  The "Save" button saves your code to appdata. The "Update from Source" button however always executes the latest code you've written, regardless of whether it has been saved or not.
-  To debug your code, run IPNS-Manager from a terminal window. All `print` statements in your code will be printed on the terminal.
+# ssh into an always-online-computer with ipfs installed and pin the updated Site's CID  
+os.system(f"ssh -t -q admin@IP_ADDRESS 'ipfs pin rm {old_ipfs_cid}; ipfs pin add {new_ipfs_cid}; ipfs name resolve {ipns_key_id}'")
+```
+The "Save" button saves your code to appdata. The "Update from Source" button however always executes the latest code you've written, regardless of whether it has been saved or not.
+To debug your code, run IPNS-Manager from a terminal window. All `print` statements in your code will be printed on the terminal.
 
 # Links:
 Naturally, this project is also hosted on IPFS.
