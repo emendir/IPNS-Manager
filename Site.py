@@ -28,13 +28,13 @@ class Site:
 
     def UpdateIPNS_Record(self):
         """Publish the new IPFS CID associated with this IPNS Record"""
-        self.ipfs_cid = IPFS_API.Upload(self.path)
+        self.ipfs_cid = IPFS_API.Publish(self.path)
         _thread.start_new_thread(IPFS_API.UpdateIPNS_RecordFromHash,
                                  (self.ipns_key_name, self.ipfs_cid, "1000h", "1000h"))
 
     def DeleteIPNS_Record(self):
-        IPFS_API.ipfs.key.rm(self.ipns_key_name)
+        IPFS_API.http_client.key.rm(self.ipns_key_name)
 
     def ChangeIPNS_Name(self, name):
-        IPFS_API.ipfs.key.rename(self.ipns_key_name, name)
+        IPFS_API.http_client.key.rename(self.ipns_key_name, name)
         self.ipns_key_name = name

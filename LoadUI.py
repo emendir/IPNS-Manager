@@ -53,7 +53,7 @@ class Main(QMainWindow, Ui_MainWindow):
         self.sitespage_lyt.addWidget(self.projectslist)
 
         paths = self.LoadPaths()    # load the paths of the IPNS sites from appdata
-        keys = IPFS_API.ipfs.key.list().get("Keys")  # get this IPFS node's list of IPNS keys
+        keys = IPFS_API.http_client.key.list().get("Keys")  # get this IPFS node's list of IPNS keys
         # adding SiteWidget for each IPNS key
         for key in keys:
             path = ""
