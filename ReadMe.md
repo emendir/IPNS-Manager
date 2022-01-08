@@ -6,6 +6,8 @@ Built with the [PyQt5](https://pypi.org/project/PyQt5/) wrapper for the Qt graph
 ## Prerequisite Knowledge and Understanding
 This program is built for people who work with IPFS and understand the basic concepts of how it works, including [IPNS (InterPlanetary Name System)](http://docs.ipfs.io.ipns.localhost:8080/concepts/ipns/).
 
+## Installation
+You can download and run the binary in the dist folder if you're using a Linux x86_64 computer (tested on Ubuntu 20). If you are using a different operating system, you can run the program from source.
 
 ### Run from Source
 - This program is written in the Python programming language. Install it and its package manager pip. Use at a version of at least 3.7.

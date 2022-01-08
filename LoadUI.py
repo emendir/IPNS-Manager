@@ -1,20 +1,24 @@
+import IPFS_API
+from MainWindow import Ui_MainWindow
+import json
+from Site import Site
+from SiteList.SiteListObject import SiteListObject
+import logging
 import sys
 from PyQt5.uic import loadUiType
 from PyQt5.QtWidgets import QMainWindow, QApplication, QMessageBox, QWidget, QHBoxLayout
 from PyQt5.QtCore import Qt, QTimer
 from PyQt5 import QtGui
 import os
-import IPFS_API
-from SiteList.SiteListObject import SiteListObject
-from Site import Site
 import appdirs
-import json
-from MainWindow import Ui_MainWindow
+appdata_dir = os.path.join(appdirs.user_data_dir(), "IPFS", "IPNS-Manager")
+logfile = os.path.join(appdata_dir, "IPNS-Manager.log")
+if os.path.exists(logfile):
+    os.remove(logfile)
+logging.basicConfig(filename=logfile, level=logging.DEBUG, force=True)
 if os.path.exists("MainWindow.ui"):
     Ui_MainWindow, QMainWindow = loadUiType('MainWindow.ui')
 
-
-appdata_dir = os.path.join(appdirs.user_data_dir(), "IPFS", "IPNS-Manager")
 
 if not os.path.exists(appdata_dir):
     os.makedirs(appdata_dir)
