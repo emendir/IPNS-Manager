@@ -31,7 +31,7 @@ class Main(QMainWindow, Ui_MainWindow):
             sys, '_MEIPASS', os.path.abspath(os.path.dirname(__file__)))
         self.setWindowIcon(QtGui.QIcon(os.path.join(bundle_dir, 'Icon.svg')))
         self.setWindowTitle("IPFS Name Manager")
-
+        IPFS_API.Start()
         # waiting till IPFS-API is opened
         while not IPFS_API.started:
             conf_mbox = QMessageBox()
