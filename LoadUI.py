@@ -1,21 +1,27 @@
 import IPFS_API
-from MainWindow import Ui_MainWindow
 import json
-from Site import Site
-from SiteList.SiteListObject import SiteListObject
-import logging
+import os
+import shutil
+import pathlib
 import sys
+
 from PyQt5.uic import loadUiType
 from PyQt5.QtWidgets import QMainWindow, QApplication, QMessageBox, QWidget, QHBoxLayout
 from PyQt5.QtCore import Qt, QTimer
 from PyQt5 import QtGui
-import os
+
 import appdirs
-appdata_dir = os.path.join(appdirs.user_data_dir(), "IPFS", "IPNS-Manager")
-logfile = os.path.join(appdata_dir, "IPNS-Manager.log")
-if os.path.exists(logfile):
-    os.remove(logfile)
-logging.basicConfig(filename=logfile, level=logging.DEBUG, force=True)
+from MainWindow import Ui_MainWindow
+from Site import Site
+from SiteList.SiteListObject import SiteListObject
+
+# move existing appdata from /IPFS/IPNS-Manager to /IPNFS-Manager
+if os.path.exists(os.path.join(appdirs.user_data_dir(), "IPFS", "IPNS-Manager")) and not os.path.exists(os.path.join(appdirs.user_data_dir(), "IPNS-Manager")):
+    shutil.move(os.path.join(appdirs.user_data_dir(), "IPFS", "IPNS-Manager"),
+                os.path.join(appdirs.user_data_dir(), "IPNS-Manager"))
+
+appdata_dir = os.path.join(appdirs.user_data_dir(), "IPNS-Manager")
+
 if os.path.exists("MainWindow.ui"):
     Ui_MainWindow, QMainWindow = loadUiType('MainWindow.ui')
 
@@ -49,7 +55,8 @@ class Main(QMainWindow, Ui_MainWindow):
                 self.close()
                 QTimer.singleShot(0, self.close)
                 return
-        self.code_save_btn.clicked.connect(self.SaveCode)
+        self.prepublish_code_save_btn.clicked.connect(self.SavePrePublishCode)
+        self.postpublish_code_save_btn.clicked.connect(self.SavePostPublishCode)
 
         # adding the main area in which the list of IPFS Sites will be displayed
         self.projectslist = SiteListObject(self)
@@ -72,7 +79,8 @@ class Main(QMainWindow, Ui_MainWindow):
                 Site(name, id, path))
 
         # loading the user's custom code for execution on IPNS publishes
-        self.LoadCode()
+        self.LoadPrePublishCode()
+        self.LoadPostPublishCode()
 
     def LoadPaths(self):
         """Loads the paths (files or folders) associated with IPNS keys from appdata."""
@@ -87,24 +95,43 @@ class Main(QMainWindow, Ui_MainWindow):
         except:
             return list()
 
-    def LoadCode(self):
+    def LoadPrePublishCode(self):
         """Loads the user's custom code for execution on every IPNS publish from appdata."""
-        codefile_path = os.path.join(appdata_dir, "CodeFile.py")
+        prepublish_codefile_path = os.path.join(appdata_dir, "prepublish_codefile.py")
 
-        if os.path.exists(codefile_path):
-            with open(codefile_path, "r") as codefile:
-                self.codebox.setPlainText(codefile.read())
+        if os.path.exists(prepublish_codefile_path):
+            with open(prepublish_codefile_path, "r") as prepublish_codefile:
+                self.prepublish_codebox.setPlainText(prepublish_codefile.read())
 
-    def SaveCode(self, e):
+    def LoadPostPublishCode(self):
+        """Loads the user's custom code for execution on every IPNS publish from appdata."""
+        postpublish_codefile_path = os.path.join(appdata_dir, "postpublish_codefile.py")
+
+        if os.path.exists(postpublish_codefile_path):
+            with open(postpublish_codefile_path, "r") as postpublish_codefile:
+                self.postpublish_codebox.setPlainText(postpublish_codefile.read())
+
+    def SavePrePublishCode(self, e):
         """Save the user's custom code for execution on every IPNS publish to appdata."""
-        with open(os.path.join(appdata_dir, "CodeFile.py"), "w+") as codefile:
-            codefile.write(self.codebox.toPlainText())
+        with open(os.path.join(appdata_dir, "prepublish_codefile.py"), "w+") as prepublish_codefile:
+            prepublish_codefile.write(self.prepublish_codebox.toPlainText())
 
-    def RunCode(self, source_path, old_ipfs_cid, new_ipfs_cid, ipns_key_id, ipns_key_name):
+    def SavePostPublishCode(self, e):
+        """Save the user's custom code for execution on every IPNS publish to appdata."""
+        with open(os.path.join(appdata_dir, "postpublish_codefile.py"), "w+") as postpublish_codefile:
+            postpublish_codefile.write(self.postpublish_codebox.toPlainText())
+
+    def RunPrePublishCode(self, source_path, old_ipfs_cid, ipns_key_id, ipns_key_name):
         """Runs the user's custom code, using the paramaters of this function
         (attributes of the currently updates Site) as variables which they can access.
         Gets called when a SiteWidget's 'Update from Path' button is pressed."""
-        exec(self.codebox.toPlainText())
+        exec(self.prepublish_codebox.toPlainText())
+
+    def RunPostPublishCode(self, source_path, old_ipfs_cid, new_ipfs_cid, ipns_key_id, ipns_key_name):
+        """Runs the user's custom code, using the paramaters of this function
+        (attributes of the currently updates Site) as variables which they can access.
+        Gets called when a SiteWidget's 'Update from Path' button is pressed."""
+        exec(self.postpublish_codebox.toPlainText())
 
 
 app = QApplication(sys.argv)
