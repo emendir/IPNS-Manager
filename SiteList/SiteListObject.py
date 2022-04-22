@@ -52,11 +52,14 @@ class SiteListObject(QWidget, SiteListObject):
             old_ipfs_cid = site_widget.ipfs_cid_txbx.text()
             site_widget.site.path = site_widget.path_txbx.text()
             site_widget.site.name = site_widget.name_txbx.text()
-            site_widget.site.UpdateIPNS_Record()    # publish IPNS changes
+            _thread.start_new_thread(self.mainwindow.RunPrePublishCode, (site_widget.site.path, old_ipfs_cid,
+                                                                         site_widget.site.ipns_key_id, site_widget.site.ipns_key_name))
+
+            site_widget.site.UpdateIPNS_Record()    # upload to IPFS, update site.cid, update IPNS record
             site_widget.ipfs_cid_txbx.setText(site_widget.site.ipfs_cid)
             # execute the user's custom code
-            _thread.start_new_thread(self.mainwindow.RunCode, (site_widget.site.path, old_ipfs_cid, site_widget.site.ipfs_cid,
-                                                               site_widget.site.ipns_key_id, site_widget.site.ipns_key_name))
+            _thread.start_new_thread(self.mainwindow.RunPostPublishCode, (site_widget.site.path, old_ipfs_cid, site_widget.site.ipfs_cid,
+                                                                          site_widget.site.ipns_key_id, site_widget.site.ipns_key_name))
 
         def RemoveSite(e):
             """Function to delete this IPNS Site"""

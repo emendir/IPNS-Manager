@@ -7,7 +7,7 @@ Built with the [PyQt5](https://pypi.org/project/PyQt5/) wrapper for the Qt graph
 This program is built for people who work with IPFS and understand the basic concepts of how it works, including [IPNS (InterPlanetary Name System)](http://docs.ipfs.io.ipns.localhost:8080/concepts/ipns/).
 
 ## Installation
-You can download and run the binary in the dist folder if you're using a Linux x86_64 computer (tested on Ubuntu 20). If you are using a different operating system, you can run the program from source.
+You can download and run the binary in the dist folder if you're using a Linux or Windows x86_64 computer (tested on Ubuntu 20 and Windows 10). If you are using a different operating system, you can run the program from source and try to create a binary by running the "build.py" script.
 
 ### Run from Source
 - This program is written in the Python programming language. Install it and its package manager pip. Use at a version of at least 3.7.
@@ -49,7 +49,9 @@ Make sure IPFS is running on your computer before you run this program.
 ![](Screenshots/NewSite.png)![](Screenshots/AddedSource.png)
 
 ### Adding Custom Code
-You can add your own Python code to be executed whenever you press a Site's "Update from Source". At the bottom of the IPNS-Manager window, press the "Code" tab. This will open a new view with a field in which you can paste a small python script. In this code, you can access the newly updated Site's data using the following variables:
+You can add your own Python code to be executed whenever you press a Site's "Update from Source".
+You can choose whether you want your code to be executed before your Site is uploaded to IPFS or afterwards.
+At the bottom of the IPNS-Manager window, press the "Pre-Publish Code Execution" or "Post-Publish Code Execution" tab, depending on when you want your code to be run. This will open a new view with a field in which you can paste a small python script. In this code, you can access the newly updated Site's data using the following variables:
 ```python
 source_path  
 old_ipfs_cid  
@@ -57,7 +59,8 @@ new_ipfs_cid
 ipns_key_id  
 ipns_key_name 
 ```
-You also have access to the [IPFS-Toolkit](https://ipfs.io/ipns/k2k4r8m2dzqi5s8jm3shm77sr1728ex7bsds0fk6e9gkf2ld2f3mnhcy) library (which contains the `IPFS_API`, `IPFS_DataTransmission` and `IPFS_LNS` modules), as well as all global variables in the LoadUI.py script from IPNS-Manager's source code.
+You also have access to the [IPFS-Toolkit](https://ipfs.io/ipns/k2k4r8m2dzqi5s8jm3shm77sr1728ex7bsds0fk6e9gkf2ld2f3mnhcy) library (which contains the `IPFS_API`, `IPFS_DataTransmission` and `IPFS_LNS` modules), the os, shutil, pathlib, json & sys modules as well as all global variables in the LoadUI.py script from IPNS-Manager's source code, and the modules
+
 
 ![](Screenshots/Code.png)
 
@@ -78,5 +81,5 @@ To debug your code, run IPNS-Manager from a terminal window. All `print` stateme
 # Links:
 Naturally, this project is also hosted on IPFS.
 
-Website: https://ipfs.io/ipns/k2k4r8m303h5pjaz7m3fckizzr6lne00ha6kcs97n20ivg9bpm1eu072  
+Website: https://ipfs.io/ipns/k2k4r8ljes96axbavl5ox9clsqjcputv2k7ztgjk66oqz3vkdc2guwrw  
 Source Code: https://ipfs.io/ipns/k2k4r8ksqdoku10pkm3ftt4d5c8svd9brfm22255uk3ho0sym169l8xi

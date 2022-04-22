@@ -232,7 +232,7 @@ color: rgb(238, 238, 236);</string>
          <x>0</x>
          <y>0</y>
          <width>787</width>
-         <height>476</height>
+         <height>449</height>
         </rect>
        </property>
        <attribute name="label">
@@ -240,17 +240,17 @@ color: rgb(238, 238, 236);</string>
        </attribute>
        <layout class="QVBoxLayout" name="sitespage_lyt"/>
       </widget>
-      <widget class="QWidget" name="CodePage">
+      <widget class="QWidget" name="PostPublishCodPage">
        <property name="geometry">
         <rect>
          <x>0</x>
          <y>0</y>
          <width>787</width>
-         <height>476</height>
+         <height>449</height>
         </rect>
        </property>
        <attribute name="label">
-        <string>Code</string>
+        <string>Pre-Publish Code Execution</string>
        </attribute>
        <layout class="QVBoxLayout" name="verticalLayout">
         <item>
@@ -262,7 +262,7 @@ color: rgb(238, 238, 236);</string>
            </sizepolicy>
           </property>
           <property name="text">
-           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Here you can add python code to be run every time you press a Site's &amp;quot;Update from path&amp;quot; button. You have acces to the following variables that belong to that Site, as well as the &lt;a href=&quot;https://github.com/emendir/IPFS-Toolkit-Python&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#2eb8e6;&quot;&gt;IPFS-Toolkit &lt;/span&gt;&lt;/a&gt;module:&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Here you can add python code to be run every time you press a Site's &amp;quot;Update from path&amp;quot; button. This code gets executed just before the site folder/file is uploaded to IPFS, so it's a great way to automate adding some finishing touches to the site before it's published.&lt;/p&gt;&lt;p&gt;You have access to the following variables that belong to that Site, as well as the &lt;a href=&quot;https://github.com/emendir/IPFS-Toolkit-Python&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#2eb8e6;&quot;&gt;IPFS-Toolkit &lt;/span&gt;&lt;/a&gt;module and os, shutil, pathlib, json &amp;amp; sys:&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
           </property>
           <property name="scaledContents">
            <bool>false</bool>
@@ -285,6 +285,78 @@ color: rgb(238, 238, 236);</string>
           <property name="text">
            <string>source_path
 old_ipfs_cid
+ipns_key_id
+ipns_key_name</string>
+          </property>
+          <property name="wordWrap">
+           <bool>true</bool>
+          </property>
+          <property name="margin">
+           <number>6</number>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QTextEdit" name="prepublish_codebox">
+          <property name="font">
+           <font>
+            <family>Liberation Mono</family>
+           </font>
+          </property>
+          <property name="toolTip">
+           <string>enter your python code here</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="prepublish_code_save_btn">
+          <property name="toolTip">
+           <string>save your custom python code</string>
+          </property>
+          <property name="text">
+           <string>Save</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="PostPublishCodPage">
+       <attribute name="label">
+        <string>Post-Publish Code Execution</string>
+       </attribute>
+       <layout class="QVBoxLayout" name="verticalLayout_2">
+        <item>
+         <widget class="QLabel" name="label_4">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="text">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Here you can add python code to be run every time you press a Site's &amp;quot;Update from path&amp;quot; button. This code gets executed right after the site folder/file is uploaded to IPFS, so it's a great way round off your content delivery system by automating the last finish-up processing steps.&lt;/p&gt;&lt;p&gt;You have access to the following variables that belong to that Site, as well as the &lt;a href=&quot;https://github.com/emendir/IPFS-Toolkit-Python&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#2eb8e6;&quot;&gt;IPFS-Toolkit &lt;/span&gt;&lt;/a&gt;module and os, shutil, pathlib, json &amp;amp; sys:&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="scaledContents">
+           <bool>false</bool>
+          </property>
+          <property name="wordWrap">
+           <bool>true</bool>
+          </property>
+          <property name="margin">
+           <number>0</number>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="label_3">
+          <property name="font">
+           <font>
+            <family>Liberation Mono</family>
+           </font>
+          </property>
+          <property name="text">
+           <string>source_path
+old_ipfs_cid
 new_ipfs_cid
 ipns_key_id
 ipns_key_name</string>
@@ -298,7 +370,7 @@ ipns_key_name</string>
          </widget>
         </item>
         <item>
-         <widget class="QTextEdit" name="codebox">
+         <widget class="QTextEdit" name="postpublish_codebox">
           <property name="font">
            <font>
             <family>Liberation Mono</family>
@@ -310,7 +382,7 @@ ipns_key_name</string>
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="code_save_btn">
+         <widget class="QPushButton" name="postpublish_code_save_btn">
           <property name="toolTip">
            <string>save your custom python code</string>
           </property>
