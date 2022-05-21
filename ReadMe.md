@@ -1,7 +1,7 @@
 # IPNS-Manager
 IPFS-Manager is a GUI program for managing [IPFS (InterPlanetary File System)](https://ipfs.io) name keys. Its purpose is to make it easier to manage websites (and other content) hosted on IPFS with IPNS keys (IPFS Name System).
 
-Built with the [PyQt5](https://pypi.org/project/PyQt5/) wrapper for the Qt graphics framework and the [IPFS-Toolkit](https://github.com/emendir/IPFS-Toolkit-Python) API for IPFS. 
+Built in Python with the [PyQt5](https://pypi.org/project/PyQt5/) wrapper for the Qt graphics framework and the [IPFS-Toolkit](https://github.com/emendir/IPFS-Toolkit-Python) API for IPFS. 
 
 ## Prerequisite Knowledge and Understanding
 This program is built for people who work with IPFS and understand the basic concepts of how it works, including [IPNS (InterPlanetary Name System)](http://docs.ipfs.io.ipns.localhost:8080/concepts/ipns/).
@@ -46,7 +46,8 @@ Make sure IPFS is running on your computer before you run this program.
 - Click the "Update from Source" button to upload the Site source to IPFS and assgn it to the IPNS key.
 - You can view the Site on IPFS in your browser by clicking one of the "Open in Browser" buttons. The upper button opens the Site using its CID, wheras the lower button opens the Site using its IPNS key (which may take a longer time to load).
 
-![](Screenshots/NewSite.png)![](Screenshots/AddedSource.png)
+![](Screenshots/NewSite.png)
+![](Screenshots/AddedSource.png)
 
 ### Adding Custom Code
 You can add your own Python code to be executed whenever you press a Site's "Update from Source".
