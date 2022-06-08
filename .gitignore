@@ -6,3 +6,5 @@ WebSite
 build
 *.html
 .gitignore
+publish.py
+dist
