@@ -1,3 +1,27 @@
+"""
+This file contains a plugin for IPNS-Manager that will automatically pin IPNS
+Sites to another computer via an SSH connection whenever the user updates the
+Site's content.
+
+This plugin requires the SSHRemotePinningUI.ui file (which defubes the
+graphical UI elements and their layout) to be in the same folder.
+The SSHRemotePinningUI.ui was created with and can be edited with Qt Designer,
+a GUI program for creating Qt GUIs. On linux, this can be installed by running:
+sudo apt -y install qttools5-dev-tools
+sudo apt -y install qttools5-dev
+For other operating systes, check out Qt's website:
+https://www.qt.io/download-open-source
+
+You can use this plugin as a starting point for building your own plugins.
+To do so, simply make copies of this file and SSHRemotePinningUI.ui in the same
+directory, renaming the copies appropriately, and modify them accordingly.
+This file is clearly documented, so if you are familiar with programming in
+Python and using the Qt framework with Python via the PyQt5 library, you
+should learn to understand how this plugin system works fairly quickly.
+More explicit documetation is coming soon.
+"""
+
+
 import os           # various utilities for interacting with operating system
 import appdirs      # library for getting appdata dir
 import json         # library for serialising python objects for appdata
