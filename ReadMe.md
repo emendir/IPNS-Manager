@@ -49,7 +49,13 @@ Make sure IPFS is running on your computer before you run this program.
 ![](Screenshots/NewSite.png)
 ![](Screenshots/AddedSource.png)
 
-### Adding Custom Code
+# Extending Functionality
+INS-Manager has two different features that allow you to extend its functionality: __custom code__ and __plugins__.  
+IPNS' __custom code__ feature allows you to quickly and easily add one or a few lines of python code to be executed every time a user updates a Site. 
+IPNS' __plugin__ framework allows you to develop plugins with graphical user interfaces that can be integrated into IPNS-Manager and used by people with no programming skill.
+
+
+## Adding Custom Code
 You can add your own Python code to be executed whenever you press a Site's "Update from Source".
 You can choose whether you want your code to be executed before your Site is uploaded to IPFS or afterwards.
 At the bottom of the IPNS-Manager window, press the "Pre-Publish Code Execution" or "Post-Publish Code Execution" tab, depending on when you want your code to be run. This will open a new view with a field in which you can paste a small python script. In this code, you can access the newly updated Site's data using the following variables:
@@ -79,8 +85,34 @@ os.system(f"ssh -t -q admin@IP_ADDRESS 'ipfs pin rm {old_ipfs_cid}; ipfs pin add
 The "Save" button saves your code to appdata. The "Update from Source" button however always executes the latest code you've written, regardless of whether it has been saved or not.
 To debug your code, run IPNS-Manager from a terminal window. All `print` statements in your code will be printed on the terminal.
 
-# Links:
-Naturally, this project is also hosted on IPFS.
 
-Website: https://ipfs.io/ipns/k2k4r8ljes96axbavl5ox9clsqjcputv2k7ztgjk66oqz3vkdc2guwrw  
-Source Code: https://ipfs.io/ipns/k2k4r8ksqdoku10pkm3ftt4d5c8svd9brfm22255uk3ho0sym169l8xi
+# Building Plugins
+In their simplest form, IPNS-Manager plugins consists of a python class named "Plugin" which defines the `PrePublish` and `PostPublish` functions and is coded in a file that lives in a folder called 'Plugins' located either inside [the project source directory, the same directory as the IPNS-Binary, or the IPNS-Manager's appdata path].
+__Example of the simplest code for a plugin__:
+```python
+class Plugin:
+  def PrePublish(self, source_path, old_ipfs_cid, ipns_key_id, ipns_key_name):
+      """
+      This function gets executed every time the user clicks a Site's
+      'Update from Source' button, before the source is actually uploaded
+      to IPFS.
+      """
+      pass
+
+  def PostPublish(self, source_path, old_ipfs_cid, new_ipfs_cid, ipns_key_id, ipns_key_name):
+      """
+      This function gets executed every time the user clicks a Site's
+      'Update from Source' button, after the source is uploaded to IPFS.
+      """
+      pass
+```
+The name of the class must be `Plugin`, whereas the filename in which the class is coded is irrevelevant (as long as the file has the `.py` extension and is located in one of the plugin directories mentioned above, IPNS-Manager will try to load it).
+
+At this stage this simple plugin already has all the functionality of the IPNS-Manager's custom code feature, plus it can remember data stored in variables (attributes of `Plugin`) for the whole runtime of IPNS-Manager, not just the instantaneous execution of custom code's scripts.
+
+If you want your plugin to have a user interface that will appear as a toolbar tab alongside 'Sites', 
+
+
+# Links:
+This project's IPFS URL:  
+[ipns://k2k4r8nismm5mmgrox2fci816xvj4l4cudnuc55gkfoealjuiaexbsup#IPNS-Manager](https://ipfs.io/ipns/k2k4r8nismm5mmgrox2fci816xvj4l4cudnuc55gkfoealjuiaexbsup#IPNS-Manager)
