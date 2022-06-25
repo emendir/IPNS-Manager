@@ -1,3 +1,4 @@
+from inspect import signature
 import IPFS_API
 import json
 import os
@@ -154,13 +155,18 @@ class Main(QMainWindow, Ui_MainWindow):
                 print(traceback.format_exc())
 
     def LoadPlugins(self):
-        if not os.path.exists("Plugins"):
-            return
-        for file in os.listdir("Plugins"):
-            plugin_path = os.path.join("Plugins", file)
-            if os.path.isfile(plugin_path) and file[-3:] == ".py" and file != "__main__.py" and file != "Plugin.py":
+        files = []
+        path_1 = "Plugins"
+        path_2 = os.path.join(appdata_dir, "Plugins")
+        if os.path.exists(path_1):
+            files += [os.path.join(path_1, file) for file in os.listdir(path_1)]
+        if os.path.exists(path_2):
+            files += [os.path.join(path_2, file) for file in os.listdir(path_2)]
+        for plugin_path in files:
+            file_name = os.path.basename(plugin_path)
+            if os.path.isfile(plugin_path) and file_name[-3:] == ".py" and file_name != "__main__.py":
                 try:
-                    plugin_name = file[:-3]
+                    plugin_name = file_name[:-3]
                     print(f"Loading plugin {plugin_name}")
                     import importlib.util
                     import sys
@@ -169,9 +175,13 @@ class Main(QMainWindow, Ui_MainWindow):
                     plugin = importlib.util.module_from_spec(spec)
                     sys.modules[plugin_name] = plugin
                     spec.loader.exec_module(plugin)
-                    plugin = plugin.Plugin(self)
-                    self.toolBox.addItem(plugin, plugin.plugin_friendly_name)
-                    self.plugins.append(plugin)
+                    if len(signature(plugin.Plugin).parameters) == 1:
+                        plugin_obj = plugin.Plugin(self)
+                        if issubclass(plugin.Plugin, QWidget):
+                            self.toolBox.addItem(plugin_obj, plugin_obj.plugin_friendly_name)
+                    else:
+                        plugin_obj = plugin.Plugin()
+                    self.plugins.append(plugin_obj)
                 except:
                     print("Failed to load plugin", plugin_name)
                     print(traceback.format_exc())
