@@ -17,7 +17,10 @@ import appdirs
 from MainWindow import Ui_MainWindow
 from Site import Site
 from SiteList.SiteListObject import SiteListObject
+import pdb
 
+
+DEBUGGING = False
 # move existing appdata from /IPFS/IPNS-Manager to /IPNFS-Manager
 if os.path.exists(os.path.join(appdirs.user_data_dir(), "IPFS", "IPNS-Manager")) and not os.path.exists(os.path.join(appdirs.user_data_dir(), "IPNS-Manager")):
     shutil.move(os.path.join(appdirs.user_data_dir(), "IPFS", "IPNS-Manager"),
