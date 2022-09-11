@@ -136,11 +136,16 @@ class Main(QMainWindow, Ui_MainWindow):
             exec(self.prepublish_codebox.toPlainText())
         except:
             print(traceback.format_exc())
+        ipfs_cid = ""
         for plugin in self.plugins:
             try:
-                plugin.PrePublish(source_path, old_ipfs_cid, ipns_key_id, ipns_key_name)
+                result = plugin.PrePublish(source_path, old_ipfs_cid, ipns_key_id, ipns_key_name)
+                if isinstance(result, dict):
+                    if "ipfs_cid" in result.keys():
+                        ipfs_cid = result["ipfs_cid"]
             except:
                 print(traceback.format_exc())
+        return ipfs_cid
 
     def RunPostPublishCode(self, source_path, old_ipfs_cid, new_ipfs_cid, ipns_key_id, ipns_key_name):
         """Runs the user's custom code, using the paramaters of this function
