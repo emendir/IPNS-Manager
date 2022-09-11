@@ -26,9 +26,13 @@ class Site:
             _thread.start_new_thread(ResolveKey, ())
             self.path = path
 
-    def UpdateIPNS_Record(self):
-        """Publish the new IPFS CID associated with this IPNS Record"""
-        self.ipfs_cid = IPFS_API.Publish(self.path)
+    def UpdateIPNS_Record(self, new_cid=""):
+        """Publish self.path to IPFS (unless new_cid is specified)
+        and update this IPNS Record to point to the new CID"""
+        if new_cid != "":
+            self.ipfs_cid = new_cid
+        else:
+            self.ipfs_cid = IPFS_API.Publish(self.path)
         _thread.start_new_thread(IPFS_API.UpdateIPNS_RecordFromHash,
                                  (self.ipns_key_name, self.ipfs_cid, "1000h", "1000h"))
 
