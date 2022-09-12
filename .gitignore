@@ -8,3 +8,4 @@ build
 .gitignore
 publish.py
 dist
+test.py
