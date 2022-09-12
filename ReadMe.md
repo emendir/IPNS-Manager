@@ -114,33 +114,40 @@ At this stage this simple plugin already has all the functionality of the IPNS-M
 If you want your plugin to have a user interface that will appear as a toolbar tab alongside 'Sites', you can use the QtDesigner software (available for Linux, Windows and Mac) to create a user interface. [Here is an external tutorial to help getting started learning to use QtDesigner.](https://realpython.com/qt-designer-python/)
 
 Let us use the provided SSHRemotePinning plugin as a demo-plugin to look into how GUI plugins can be created.
-The SSHRemotePinning plugin consists of two files:
-[SSHRemotePinning.py](./Plugins/SSHRemotePinning.py)
+The SSHRemotePinning plugin consists of two files:  
+[SSHRemotePinning.py](./Plugins/SSHRemotePinning.py)  
 [SSHRemotePinning.ui](./Plugins/SSHRemotePinningUI.ui)
 
 The [SSHRemotePinning.ui](./Plugins/SSHRemotePinningUI.ui) contains the markup code which defines the components of the GUI and their layout. We create this file in the QtDesigner software, choosing "QWidget" in the welcome screen:
+
 ![](./Screenshots/Qt-Designer-NewForm.png)
 
 I won't go into detail of how to use QtDesigner, learn that from one of the countless tutorials on the internet like [this one](https://realpython.com/qt-designer-python/).
 For the SSHRemotePinning plugin, the finished UI in QtDesigner looks like this:
+
 ![](./Screenshots/Qt-Designer-SSHRemotePinningUI.png)
 
 Now let's look at the Python code in [SSHRemotePinning.py](./Plugins/SSHRemotePinning.py).
 The first thing we need to do is import the necessary libraries from the Qt GUI framework library (PyQt5):
+
 ```Python
 # GUI framework libraries
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.uic import loadUiType
 from PyQt5.QtWidgets import QMainWindow, QApplication, QMessageBox, QInputDialog
 ```
+
 Then we need to load the markup code contained in [SSHRemotePinning.ui](./Plugins/SSHRemotePinningUI.ui) into a python class called `SSHRemotePinningWidget`: 
+
 ```Python
 # importing the user interface created with Qt Designer saved as the
 # 'SSHRemotePinningUI.ui' file as a class called SSHRemotePinningWidget
 SSHRemotePinningWidget, QWidget = loadUiType(os.path.join(
     os.path.dirname(__file__), 'SSHRemotePinningUI.ui'))
 ```
+
 Then we can define our Plugin class, inheriting the QWidget class and this SSHRemotePinningWidget class, with the necessary code to initialise them properly on runtime:
+
 ```Python
 class Plugin(QWidget, SSHRemotePinningWidget):
     def __init__(self, mainwindow):
@@ -154,6 +161,7 @@ This concludes setting up the framework that makes the plugin's GUI work, so now
 
 ### GUI Element Eventhandlers
 We put our python code that we want to get executed when the the user manipulates GUI elements like pressing buttons or typing text into textboxes in functions called eventhandlers. You need to link eventhandlers to their respective events; this is usually done in the `__init__` function. Here are some examples from the SSHRemotePinning plugin:
+
 ```Python
         # setting eventhandlers for UI elements
         self.pinner_ip_txbx.textEdited.connect(self.OnPinnerIPChanged)
@@ -161,10 +169,12 @@ We put our python code that we want to get executed when the the user manipulate
             self.OnPinnerUserNameChanged)
         self.test_btn.clicked.connect(self.OnTestBtnClicked)
 ```
+
 Let's have a look at the first line. `self.pinner_ip_txbx` is the name of a textbox named `pinner_ip_txbx` of type `QLineEdit`, defined in QtDesigner and the [SSHRemotePinning.ui](./Plugins/SSHRemotePinningUI.ui) and an attribute of the `SSHRemotePinningWidget` class, and by extension an attribute of the `Plugin` class as it inherits `SSHRemotePinningWidget`.
 The `pinner_ip_txbx` has an event called textEdited, which we are linking in this line of python code to a method in the `Plugin` class which we define and is in this case called `OnPinnerIPChanged`.
 
 Let's have a quick look at the eventhandler:
+
 ```Python
     def OnPinnerIPChanged(self, event_args):
         self.pinner_ip = self.pinner_ip_txbx.text()
@@ -180,13 +190,13 @@ This is done in the `PrePublish` function by returning a dict that contains the 
 Example (complete plugin code except for the process of getting the desired IPFS-CID):
 ```Python
 class Plugin:
-  def PrePublish(self, source_path, old_ipfs_cid, ipns_key_id, ipns_key_name):
-      # get desired IPFS CID for Site
-      ipfs cid = ''
-      return {"ipfs_cid": ipfs_cid}
- 
-  def PostPublish(self, source_path, old_ipfs_cid, new_ipfs_cid, ipns_key_id, ipns_key_name):
-      pass
+    def PrePublish(self, source_path, old_ipfs_cid, ipns_key_id, ipns_key_name):
+        # get desired IPFS CID for Site
+        ipfs cid = ''
+        return {"ipfs_cid": ipfs_cid}
+   
+    def PostPublish(self, source_path, old_ipfs_cid, new_ipfs_cid, ipns_key_id, ipns_key_name):
+        pass
 ```
 # Links:
 This project's IPFS URL:  
