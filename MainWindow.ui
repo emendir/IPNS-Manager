@@ -219,7 +219,7 @@ color: rgb(238, 238, 236);</string>
   <widget class="QWidget" name="centralwidget">
    <layout class="QHBoxLayout" name="horizontalLayout">
     <item>
-     <widget class="QToolBox" name="toolBox">
+     <widget class="QToolBox" name="main_widget_tlbx">
       <property name="toolTip">
        <string/>
       </property>
