@@ -85,15 +85,15 @@ class Ui_MainWindow(object):
         self.centralwidget.setObjectName("centralwidget")
         self.horizontalLayout = QtWidgets.QHBoxLayout(self.centralwidget)
         self.horizontalLayout.setObjectName("horizontalLayout")
-        self.toolBox = QtWidgets.QToolBox(self.centralwidget)
-        self.toolBox.setToolTip("")
-        self.toolBox.setObjectName("toolBox")
+        self.main_widget_tlbx = QtWidgets.QToolBox(self.centralwidget)
+        self.main_widget_tlbx.setToolTip("")
+        self.main_widget_tlbx.setObjectName("main_widget_tlbx")
         self.SitesPage = QtWidgets.QWidget()
         self.SitesPage.setGeometry(QtCore.QRect(0, 0, 787, 449))
         self.SitesPage.setObjectName("SitesPage")
         self.sitespage_lyt = QtWidgets.QVBoxLayout(self.SitesPage)
         self.sitespage_lyt.setObjectName("sitespage_lyt")
-        self.toolBox.addItem(self.SitesPage, "")
+        self.main_widget_tlbx.addItem(self.SitesPage, "")
         self.PostPublishCodPage = QtWidgets.QWidget()
         self.PostPublishCodPage.setGeometry(QtCore.QRect(0, 0, 787, 449))
         self.PostPublishCodPage.setObjectName("PostPublishCodPage")
@@ -125,7 +125,7 @@ class Ui_MainWindow(object):
         self.prepublish_code_save_btn = QtWidgets.QPushButton(self.PostPublishCodPage)
         self.prepublish_code_save_btn.setObjectName("prepublish_code_save_btn")
         self.verticalLayout.addWidget(self.prepublish_code_save_btn)
-        self.toolBox.addItem(self.PostPublishCodPage, "")
+        self.main_widget_tlbx.addItem(self.PostPublishCodPage, "")
         self.PostPublishCodPage1 = QtWidgets.QWidget()
         self.PostPublishCodPage1.setObjectName("PostPublishCodPage1")
         self.verticalLayout_2 = QtWidgets.QVBoxLayout(self.PostPublishCodPage1)
@@ -156,8 +156,8 @@ class Ui_MainWindow(object):
         self.postpublish_code_save_btn = QtWidgets.QPushButton(self.PostPublishCodPage1)
         self.postpublish_code_save_btn.setObjectName("postpublish_code_save_btn")
         self.verticalLayout_2.addWidget(self.postpublish_code_save_btn)
-        self.toolBox.addItem(self.PostPublishCodPage1, "")
-        self.horizontalLayout.addWidget(self.toolBox)
+        self.main_widget_tlbx.addItem(self.PostPublishCodPage1, "")
+        self.horizontalLayout.addWidget(self.main_widget_tlbx)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 795, 26))
@@ -171,13 +171,13 @@ class Ui_MainWindow(object):
         MainWindow.addToolBar(QtCore.Qt.TopToolBarArea, self.toolBar)
 
         self.retranslateUi(MainWindow)
-        self.toolBox.setCurrentIndex(0)
+        self.main_widget_tlbx.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
-        self.toolBox.setItemText(self.toolBox.indexOf(self.SitesPage), _translate("MainWindow", "Sites"))
+        self.main_widget_tlbx.setItemText(self.main_widget_tlbx.indexOf(self.SitesPage), _translate("MainWindow", "Sites"))
         self.label.setText(_translate("MainWindow", "<html><head/><body><p>Here you can add python code to be run every time you press a Site\'s &quot;Update from path&quot; button. This code gets executed just before the site folder/file is uploaded to IPFS, so it\'s a great way to automate adding some finishing touches to the site before it\'s published.</p><p>You have access to the following variables that belong to that Site, as well as the <a href=\"https://github.com/emendir/IPFS-Toolkit-Python\"><span style=\" text-decoration: underline; color:#2eb8e6;\">IPFS-Toolkit </span></a>module and os, shutil, pathlib, json &amp; sys:</p></body></html>"))
         self.label_2.setText(_translate("MainWindow", "source_path\n"
 "old_ipfs_cid\n"
@@ -186,7 +186,7 @@ class Ui_MainWindow(object):
         self.prepublish_codebox.setToolTip(_translate("MainWindow", "enter your python code here"))
         self.prepublish_code_save_btn.setToolTip(_translate("MainWindow", "save your custom python code"))
         self.prepublish_code_save_btn.setText(_translate("MainWindow", "Save"))
-        self.toolBox.setItemText(self.toolBox.indexOf(self.PostPublishCodPage), _translate("MainWindow", "Pre-Publish Code Execution"))
+        self.main_widget_tlbx.setItemText(self.main_widget_tlbx.indexOf(self.PostPublishCodPage), _translate("MainWindow", "Pre-Publish Code Execution"))
         self.label_4.setText(_translate("MainWindow", "<html><head/><body><p>Here you can add python code to be run every time you press a Site\'s &quot;Update from path&quot; button. This code gets executed right after the site folder/file is uploaded to IPFS, so it\'s a great way round off your content delivery system by automating the last finish-up processing steps.</p><p>You have access to the following variables that belong to that Site, as well as the <a href=\"https://github.com/emendir/IPFS-Toolkit-Python\"><span style=\" text-decoration: underline; color:#2eb8e6;\">IPFS-Toolkit </span></a>module and os, shutil, pathlib, json &amp; sys:</p></body></html>"))
         self.label_3.setText(_translate("MainWindow", "source_path\n"
 "old_ipfs_cid\n"
@@ -196,5 +196,5 @@ class Ui_MainWindow(object):
         self.postpublish_codebox.setToolTip(_translate("MainWindow", "enter your python code here"))
         self.postpublish_code_save_btn.setToolTip(_translate("MainWindow", "save your custom python code"))
         self.postpublish_code_save_btn.setText(_translate("MainWindow", "Save"))
-        self.toolBox.setItemText(self.toolBox.indexOf(self.PostPublishCodPage1), _translate("MainWindow", "Post-Publish Code Execution"))
+        self.main_widget_tlbx.setItemText(self.main_widget_tlbx.indexOf(self.PostPublishCodPage1), _translate("MainWindow", "Post-Publish Code Execution"))
         self.toolBar.setWindowTitle(_translate("MainWindow", "toolBar"))

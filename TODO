@@ -5,3 +5,5 @@ plugin docs
 RemotePinning plugin: password
 
 PrepublishCode change IPFS_CID: apply to code-box? documentation + release
+
+Move GUI_Wait GIF from mainwindow to SiteWidget
