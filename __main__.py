@@ -1,5 +1,5 @@
 from inspect import signature
-import IPFS_API
+import ipfs_api
 import json
 import os
 import shutil
@@ -59,16 +59,15 @@ class Main(QMainWindow, Ui_MainWindow):
         self.label.hide()
         self.gui_wait.connect(self.GUI_Wait)
         self.gui_resume.connect(self.GUI_Resume)
-        IPFS_API.Start()
         # waiting till IPFS-API is opened
-        while not IPFS_API.started:
+        while not ipfs_api.started:
             conf_mbox = QMessageBox()
             conf_mbox.setWindowTitle("Is IPFS running?")
             conf_mbox.setText(
                 "I can't connect to the IPFS node on this computer. Is IPFS running here?")
             conf_mbox.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
             if conf_mbox.exec_() == QMessageBox.Ok:
-                IPFS_API.Start()
+                ipfs_api._start()
             else:
                 self.close()
                 QTimer.singleShot(0, self.close)
@@ -84,7 +83,7 @@ class Main(QMainWindow, Ui_MainWindow):
 
         paths = self.LoadPaths()    # load the paths of the IPNS sites from appdata
         # get this IPFS node's list of IPNS keys
-        keys = IPFS_API.http_client.key.list().get("Keys")
+        keys = ipfs_api.http_client.key.list().get("Keys")
         # adding SiteWidget for each IPNS key
         for key in keys:
             path = ""
@@ -150,21 +149,21 @@ class Main(QMainWindow, Ui_MainWindow):
         """Runs the user's custom code, using the paramaters of this function
         (attributes of the currently updates Site) as variables which they can access.
         Gets called when a SiteWidget's 'Update from Path' button is pressed."""
+        new_ipfs_cid = ""
         try:
             exec(self.prepublish_codebox.toPlainText())
         except:
             print(traceback.format_exc())
-        ipfs_cid = ""
         for plugin in self.plugins:
             try:
                 result = plugin.PrePublish(
                     source_path, old_ipfs_cid, ipns_key_id, ipns_key_name)
                 if isinstance(result, dict):
-                    if "ipfs_cid" in result.keys():
-                        ipfs_cid = result["ipfs_cid"]
+                    if "new_ipfs_cid" in result.keys():
+                        new_ipfs_cid = result["new_ipfs_cid"]
             except:
                 print(traceback.format_exc())
-        return ipfs_cid
+        return new_ipfs_cid
 
     def RunPostPublishCode(self, source_path, old_ipfs_cid, new_ipfs_cid, ipns_key_id, ipns_key_name):
         """Runs the user's custom code, using the paramaters of this function

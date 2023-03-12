@@ -66,7 +66,7 @@ new_ipfs_cid
 ipns_key_id  
 ipns_key_name 
 ```
-You also have access to the [IPFS-Toolkit](https://ipfs.io/ipns/k2k4r8m2dzqi5s8jm3shm77sr1728ex7bsds0fk6e9gkf2ld2f3mnhcy) library (which contains the `IPFS_API`, `IPFS_DataTransmission` and `IPFS_LNS` modules), the os, shutil, pathlib, json & sys modules as well as all global variables in the LoadUI.py script from IPNS-Manager's source code, and the modules
+You also have access to the [IPFS-Toolkit](https://ipfs.io/ipns/k2k4r8m2dzqi5s8jm3shm77sr1728ex7bsds0fk6e9gkf2ld2f3mnhcy) library (which contains the `ipfs_api`, `IPFS_DataTransmission` and `IPFS_LNS` modules), the os, shutil, pathlib, json & sys modules as well as all global variables in the LoadUI.py script from IPNS-Manager's source code, and the modules
 
 
 ![](Screenshots/Code.png)
