@@ -19,7 +19,7 @@ class Ui_Form(object):
         self.label.setGeometry(QtCore.QRect(10, 50, 121, 20))
         self.label.setObjectName("label")
         self.pinner_ip_txbx = QtWidgets.QLineEdit(Form)
-        self.pinner_ip_txbx.setGeometry(QtCore.QRect(140, 50, 113, 28))
+        self.pinner_ip_txbx.setGeometry(QtCore.QRect(150, 50, 113, 28))
         self.pinner_ip_txbx.setObjectName("pinner_ip_txbx")
         self.test_btn = QtWidgets.QPushButton(Form)
         self.test_btn.setGeometry(QtCore.QRect(150, 130, 93, 28))
