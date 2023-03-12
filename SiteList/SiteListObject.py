@@ -48,19 +48,26 @@ class SiteListObject(QWidget, SiteListObject):
 
         def UpdateRecord(e):
             """Function to be executed when the 'Update from Path' is pressed"""
-            nonlocal site_widget
-            old_ipfs_cid = site_widget.ipfs_cid_txbx.text()
-            site_widget.site.path = site_widget.path_txbx.text()
-            site_widget.site.name = site_widget.name_txbx.text()
-            plugin_defined_cid = self.mainwindow.RunPrePublishCode(site_widget.site.path, old_ipfs_cid,
-                                                                   site_widget.site.ipns_key_id, site_widget.site.ipns_key_name)
+            def update_record():
+                nonlocal site_widget
+                old_ipfs_cid = site_widget.ipfs_cid_txbx.text()
+                site_widget.site.path = site_widget.path_txbx.text()
+                site_widget.site.name = site_widget.name_txbx.text()
+                self.mainwindow.gui_wait.emit()
 
-            # upload to IPFS, update site.cid, update IPNS record
-            site_widget.site.UpdateIPNS_Record(plugin_defined_cid)
-            site_widget.ipfs_cid_txbx.setText(site_widget.site.ipfs_cid)
-            # execute the user's custom code
-            _thread.start_new_thread(self.mainwindow.RunPostPublishCode, (site_widget.site.path, old_ipfs_cid, site_widget.site.ipfs_cid,
-                                                                          site_widget.site.ipns_key_id, site_widget.site.ipns_key_name))
+                plugin_defined_cid = self.mainwindow.RunPrePublishCode(site_widget.site.path, old_ipfs_cid,
+                                                                       site_widget.site.ipns_key_id, site_widget.site.ipns_key_name)
+
+                # upload to IPFS, update site.cid, update IPNS record
+                site_widget.site.UpdateIPNS_Record(plugin_defined_cid)
+                site_widget.ipfs_cid_txbx.setText(site_widget.site.ipfs_cid)
+
+                self.mainwindow.gui_resume.emit()
+
+                # execute the user's custom code
+                self.mainwindow.RunPostPublishCode(site_widget.site.path, old_ipfs_cid, site_widget.site.ipfs_cid,
+                                                   site_widget.site.ipns_key_id, site_widget.site.ipns_key_name)
+            _thread.start_new_thread(update_record, ())
 
         def RemoveSite(e):
             """Function to delete this IPNS Site"""

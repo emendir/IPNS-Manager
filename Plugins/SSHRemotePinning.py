@@ -28,7 +28,7 @@ import json         # library for serialising python objects for appdata
 import traceback    # library for accessing error logs
 import socket       # library for opening network communications
 import paramiko     # library for making SSH connections
-
+from threading import Thread
 # GUI framework libraries
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.uic import loadUiType
@@ -89,7 +89,8 @@ class Plugin(QWidget, SSHRemotePinningWidget):
         self.ssh.load_system_host_keys()
         if os.path.exists(self.host_keys_path):
             self.ssh.load_host_keys(self.host_keys_path)
-        self.TryToConnectSSH()  # test SSH connection using loaded settings
+        # test SSH connection using loaded settings
+        Thread(target=self.TryToConnectSSH(), args=()).start()
 
     # Functions to be run when the user updates an IPNS Site ------------------
 
@@ -172,6 +173,7 @@ class Plugin(QWidget, SSHRemotePinningWidget):
         man-in-the-middle attacks)"""
         # Get computer's SSH public key
         sock = socket.socket()
+        sock.settimeout(5)
         sock.connect((self.pinner_ip, 22))
         trans = paramiko.transport.Transport(sock)
         trans.start_client()
