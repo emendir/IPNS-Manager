@@ -1,4 +1,4 @@
-import IPFS_API
+import ipfs_api
 import _thread
 
 
@@ -16,12 +16,15 @@ class Site:
         self.ipns_key_name = name
         # Create new record if id parameterr is left empty
         if id == "":
-            self.ipns_key_id = IPFS_API.CreateIPNS_Record(name)
+            self.ipns_key_id = ipfs_api.create_ipns_record(name)
         else:
             self.ipns_key_id = id
 
             def ResolveKey():
-                self.ipfs_cid = IPFS_API.ResolveIPNS_Key(self.ipns_key_id)[6:]
+                try:
+                    self.ipfs_cid = ipfs_api.resolve_ipns_key(self.ipns_key_id)[6:]
+                except:
+                    pass
             # resolve key on separate thread because if undefined it can take a minute
             _thread.start_new_thread(ResolveKey, ())
             self.path = path
@@ -29,16 +32,17 @@ class Site:
     def UpdateIPNS_Record(self, new_cid=""):
         """Publish self.path to IPFS (unless new_cid is specified)
         and update this IPNS Record to point to the new CID"""
-        if new_cid != "":
+        print("NEW CID", new_cid)
+        if new_cid:
             self.ipfs_cid = new_cid
         else:
-            self.ipfs_cid = IPFS_API.Publish(self.path)
-        _thread.start_new_thread(IPFS_API.UpdateIPNS_RecordFromHash,
+            self.ipfs_cid = ipfs_api.publish(self.path)
+        _thread.start_new_thread(ipfs_api.update_ipns_record_from_hash,
                                  (self.ipns_key_name, self.ipfs_cid, "1000h", "1000h"))
 
     def DeleteIPNS_Record(self):
-        IPFS_API.http_client.key.rm(self.ipns_key_name)
+        ipfs_api.http_client.key.rm(self.ipns_key_name)
 
     def ChangeIPNS_Name(self, name):
-        IPFS_API.http_client.key.rename(self.ipns_key_name, name)
+        ipfs_api.http_client.key.rename(self.ipns_key_name, name)
         self.ipns_key_name = name

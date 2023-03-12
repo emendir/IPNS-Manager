@@ -1,5 +1,5 @@
 from inspect import signature
-import IPFS_API
+import ipfs_api
 import json
 import os
 import shutil
@@ -8,10 +8,10 @@ import sys
 import traceback
 
 from PyQt5.uic import loadUiType
-from PyQt5.QtWidgets import QMainWindow, QApplication, QMessageBox, QWidget, QHBoxLayout
-from PyQt5.QtCore import Qt, QTimer, pyqtProperty, QPropertyAnimation
+from PyQt5.QtWidgets import QMainWindow, QApplication, QMessageBox, QWidget, QHBoxLayout, QLabel
+from PyQt5.QtCore import Qt, QTimer, pyqtProperty, pyqtSignal, QPropertyAnimation, QRect, QSize
 from PyQt5 import QtGui
-from PyQt5.QtGui import QPixmap
+from PyQt5.QtGui import QPixmap, QMovie
 
 import appdirs
 from MainWindow import Ui_MainWindow
@@ -36,6 +36,8 @@ if os.path.exists("MainWindow.ui"):
 
 class Main(QMainWindow, Ui_MainWindow):
     plugins = []
+    gui_wait = pyqtSignal()
+    gui_resume = pyqtSignal()
 
     def __init__(self, ):
         super(Main, self).__init__()
@@ -46,22 +48,33 @@ class Main(QMainWindow, Ui_MainWindow):
             sys, '_MEIPASS', os.path.abspath(os.path.dirname(__file__)))
         self.setWindowIcon(QtGui.QIcon(os.path.join(bundle_dir, 'Icon.svg')))
         self.setWindowTitle("IPFS Name Manager")
-        IPFS_API.Start()
+
+        # Setting up GUI wait
+        self.label = QLabel(self.centralwidget)
+        self.label.setFixedSize(QSize(50, 50))
+        self.label.setGeometry(QRect(self.width() / 2 - self.label.width() / 2, self.height() / 2 - self.label.height(
+        ) / 2, self.width() / 2 - self.label.width() / 2, self.height() / 2 - self.label.height() / 2))
+        self.movie = QMovie("GUI_wait.gif")
+        self.label.setMovie(self.movie)
+        self.label.hide()
+        self.gui_wait.connect(self.GUI_Wait)
+        self.gui_resume.connect(self.GUI_Resume)
         # waiting till IPFS-API is opened
-        while not IPFS_API.started:
+        while not ipfs_api.started:
             conf_mbox = QMessageBox()
             conf_mbox.setWindowTitle("Is IPFS running?")
             conf_mbox.setText(
                 "I can't connect to the IPFS node on this computer. Is IPFS running here?")
             conf_mbox.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
             if conf_mbox.exec_() == QMessageBox.Ok:
-                IPFS_API.Start()
+                ipfs_api._start()
             else:
                 self.close()
                 QTimer.singleShot(0, self.close)
                 return
         self.prepublish_code_save_btn.clicked.connect(self.SavePrePublishCode)
-        self.postpublish_code_save_btn.clicked.connect(self.SavePostPublishCode)
+        self.postpublish_code_save_btn.clicked.connect(
+            self.SavePostPublishCode)
 
         # adding the main area in which the list of IPFS Sites will be displayed
         self.projectslist = SiteListObject(self)
@@ -69,7 +82,8 @@ class Main(QMainWindow, Ui_MainWindow):
         self.sitespage_lyt.addWidget(self.projectslist)
 
         paths = self.LoadPaths()    # load the paths of the IPNS sites from appdata
-        keys = IPFS_API.http_client.key.list().get("Keys")  # get this IPFS node's list of IPNS keys
+        # get this IPFS node's list of IPNS keys
+        keys = ipfs_api.http_client.key.list().get("Keys")
         # adding SiteWidget for each IPNS key
         for key in keys:
             path = ""
@@ -103,19 +117,23 @@ class Main(QMainWindow, Ui_MainWindow):
 
     def LoadPrePublishCode(self):
         """Loads the user's custom code for execution on every IPNS publish from appdata."""
-        prepublish_codefile_path = os.path.join(appdata_dir, "prepublish_codefile.py")
+        prepublish_codefile_path = os.path.join(
+            appdata_dir, "prepublish_codefile.py")
 
         if os.path.exists(prepublish_codefile_path):
             with open(prepublish_codefile_path, "r") as prepublish_codefile:
-                self.prepublish_codebox.setPlainText(prepublish_codefile.read())
+                self.prepublish_codebox.setPlainText(
+                    prepublish_codefile.read())
 
     def LoadPostPublishCode(self):
         """Loads the user's custom code for execution on every IPNS publish from appdata."""
-        postpublish_codefile_path = os.path.join(appdata_dir, "postpublish_codefile.py")
+        postpublish_codefile_path = os.path.join(
+            appdata_dir, "postpublish_codefile.py")
 
         if os.path.exists(postpublish_codefile_path):
             with open(postpublish_codefile_path, "r") as postpublish_codefile:
-                self.postpublish_codebox.setPlainText(postpublish_codefile.read())
+                self.postpublish_codebox.setPlainText(
+                    postpublish_codefile.read())
 
     def SavePrePublishCode(self, e):
         """Save the user's custom code for execution on every IPNS publish to appdata."""
@@ -131,21 +149,21 @@ class Main(QMainWindow, Ui_MainWindow):
         """Runs the user's custom code, using the paramaters of this function
         (attributes of the currently updates Site) as variables which they can access.
         Gets called when a SiteWidget's 'Update from Path' button is pressed."""
-        Spinner(self)
+        new_ipfs_cid = ""
         try:
             exec(self.prepublish_codebox.toPlainText())
         except:
             print(traceback.format_exc())
-        ipfs_cid = ""
         for plugin in self.plugins:
             try:
-                result = plugin.PrePublish(source_path, old_ipfs_cid, ipns_key_id, ipns_key_name)
+                result = plugin.PrePublish(
+                    source_path, old_ipfs_cid, ipns_key_id, ipns_key_name)
                 if isinstance(result, dict):
-                    if "ipfs_cid" in result.keys():
-                        ipfs_cid = result["ipfs_cid"]
+                    if "new_ipfs_cid" in result.keys():
+                        new_ipfs_cid = result["new_ipfs_cid"]
             except:
                 print(traceback.format_exc())
-        return ipfs_cid
+        return new_ipfs_cid
 
     def RunPostPublishCode(self, source_path, old_ipfs_cid, new_ipfs_cid, ipns_key_id, ipns_key_name):
         """Runs the user's custom code, using the paramaters of this function
@@ -167,9 +185,11 @@ class Main(QMainWindow, Ui_MainWindow):
         path_1 = "Plugins"
         path_2 = os.path.join(appdata_dir, "Plugins")
         if os.path.exists(path_1):
-            files += [os.path.join(path_1, file) for file in os.listdir(path_1)]
+            files += [os.path.join(path_1, file)
+                      for file in os.listdir(path_1)]
         if os.path.exists(path_2):
-            files += [os.path.join(path_2, file) for file in os.listdir(path_2)]
+            files += [os.path.join(path_2, file)
+                      for file in os.listdir(path_2)]
         for plugin_path in files:
             file_name = os.path.basename(plugin_path)
             if os.path.isfile(plugin_path) and file_name[-3:] == ".py" and file_name != "__main__.py":
@@ -186,7 +206,8 @@ class Main(QMainWindow, Ui_MainWindow):
                     if len(signature(plugin.Plugin).parameters) == 1:
                         plugin_obj = plugin.Plugin(self)
                         if issubclass(plugin.Plugin, QWidget):
-                            self.toolBox.addItem(plugin_obj, plugin_obj.plugin_friendly_name)
+                            self.main_widget_tlbx.addItem(
+                                plugin_obj, plugin_obj.plugin_friendly_name)
                     else:
                         plugin_obj = plugin.Plugin()
                     self.plugins.append(plugin_obj)
@@ -194,38 +215,19 @@ class Main(QMainWindow, Ui_MainWindow):
                     print("Failed to load plugin", plugin_name)
                     print(traceback.format_exc())
 
+    def GUI_Wait(self):
+        self.main_widget_tlbx.setEnabled(False)
+        self.label.show()
+        self.movie.start()
 
-class Spinner(QWidget):
-    def __init__(self, parent=None):
-        super().__init__(parent)
-        # self.setAlignment(QtCore.Qt.AlignCenter)
-        self.pixmap = QPixmap("Icon.svg")
+    def GUI_Resume(self):
+        self.movie.stop()
+        self.label.hide()
+        self.main_widget_tlbx.setEnabled(True)
 
-        self.setFixedSize(30, 30)
-        self._angle = 0
-
-        self.animation = QPropertyAnimation(self, b"angle", self)
-        self.animation.setStartValue(0)
-        self.animation.setEndValue(360)
-        self.animation.setLoopCount(-1)
-        self.animation.setDuration(2000)
-        self.animation.start()
-
-    @pyqtProperty(int)
-    def angle(self):
-        return self._angle
-
-    @angle.setter
-    def angle(self, value):
-        self._angle = value
-        self.update()
-
-    def paintEvent(self, ev=None):
-        painter = QPainter(self)
-        painter.translate(15, 15)
-        painter.rotate(self._angle)
-        painter.translate(-15, -15)
-        painter.drawPixmap(5, 5, self.pixmap)
+    def resizeEvent(self, e):
+        self.label.setGeometry(QRect(self.width() / 2 - self.label.width() / 2, self.height() / 2 - self.label.height(
+        ) / 2, self.width() / 2 - self.label.width() / 2, self.height() / 2 - self.label.height() / 2))
 
 
 app = QApplication(sys.argv)

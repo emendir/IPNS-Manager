@@ -9,3 +9,4 @@ build
 publish.py
 dist
 test.py
+.gyte
