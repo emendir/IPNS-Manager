@@ -1,2 +1,2 @@
-IPFS-Tookit>=0.2.0
+IPFS-Tookit>=0.5.0
 PyQt5
