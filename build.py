@@ -20,23 +20,23 @@ for dirname, dirnames, filenames in os.walk("."):
 # shutil.rmtree("dist")
 
 # if (platform.system().lower() == "windows"):
-#     os.system("pyinstaller --name=IPNS-Manager --windowed --onefile --add-data=Icon.svg;. --hidden-import=multiaddr.codecs.ip4 --hidden-import=multiaddr.codecs.idna --hidden-import=multiaddr.codecs.uint16be LoadUI.py")
+#     os.system("pyinstaller --name=IPNS-Manager --windowed --onefile --add-data=IPNS-Manager-Icon.svg;. --hidden-import=multiaddr.codecs.ip4 --hidden-import=multiaddr.codecs.idna --hidden-import=multiaddr.codecs.uint16be LoadUI.py")
 #     shutil.move(os.path.join("dist", "IPNS-Manager.exe"),
 #                 os.path.join("dist", f"IPNS-Manager_{platform.system().lower()}_{platform.machine().lower()}.exe"))
 # else:
-#     os.system("pyinstaller --name='IPNS-Manager' --windowed --onefile --add-data='Icon.svg:.' --hidden-import=multiaddr.codecs.ip4 --hidden-import=multiaddr.codecs.idna --hidden-import=multiaddr.codecs.uint16be LoadUI.py")
+#     os.system("pyinstaller --name='IPNS-Manager' --windowed --onefile --add-data='IPNS-Manager-Icon.svg:.' --hidden-import=multiaddr.codecs.ip4 --hidden-import=multiaddr.codecs.idna --hidden-import=multiaddr.codecs.uint16be LoadUI.py")
 #     shutil.move(os.path.join("dist", "IPNS-Manager"),
 #                 os.path.join("dist", f"IPNS-Manager_{platform.system().lower()}_{platform.machine().lower()}"))
 
 if (platform.system().lower() == "windows"):
-    cmd = f"pyinstaller --name={project_name} --windowed --onefile --add-data=Icon.svg;. __main__.py"
+    cmd = f"pyinstaller --name={project_name} --windowed --onefile --add-data=IPNS-Manager-Icon.svg;. __main__.py"
     for lib in hidden_imports:
         cmd += f" --hidden-import={lib}"
     os.system(cmd)
     shutil.move(os.path.join("dist", f"{project_name}.exe"),
                 os.path.join("dist", f"{project_name}_v{version}_{platform.system().lower()}_{platform.machine().lower().replace('x86_64', 'amd64')}.exe"))
 else:
-    cmd = f"pyinstaller --name='{project_name}' --windowed --onefile --add-data='Icon.svg:.' __main__.py"
+    cmd = f"pyinstaller --name='{project_name}' --windowed --onefile --add-data='IPNS-Manager-Icon.svg:.' __main__.py"
     for lib in hidden_imports:
         cmd += f" --hidden-import={lib}"
     os.system(cmd)

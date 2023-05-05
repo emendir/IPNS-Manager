@@ -37,7 +37,7 @@ class Site:
             self.ipfs_cid = new_cid
         else:
             self.ipfs_cid = ipfs_api.publish(self.path)
-        _thread.start_new_thread(ipfs_api.update_ipns_record_from_hash,
+        _thread.start_new_thread(ipfs_api.update_ipns_record_from_cid,
                                  (self.ipns_key_name, self.ipfs_cid, "1000h", "1000h"))
 
     def DeleteIPNS_Record(self):

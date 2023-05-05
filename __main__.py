@@ -46,7 +46,7 @@ class Main(QMainWindow, Ui_MainWindow):
         # setting icon and window title
         bundle_dir = getattr(
             sys, '_MEIPASS', os.path.abspath(os.path.dirname(__file__)))
-        self.setWindowIcon(QtGui.QIcon(os.path.join(bundle_dir, 'Icon.svg')))
+        self.setWindowIcon(QtGui.QIcon(os.path.join(bundle_dir, 'IPNS-Manager-Icon.svg')))
         self.setWindowTitle("IPFS Name Manager")
 
         # Setting up GUI wait
@@ -60,18 +60,20 @@ class Main(QMainWindow, Ui_MainWindow):
         self.gui_wait.connect(self.GUI_Wait)
         self.gui_resume.connect(self.GUI_Resume)
         # waiting till IPFS-API is opened
-        while not ipfs_api.started:
-            conf_mbox = QMessageBox()
-            conf_mbox.setWindowTitle("Is IPFS running?")
-            conf_mbox.setText(
-                "I can't connect to the IPFS node on this computer. Is IPFS running here?")
-            conf_mbox.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
-            if conf_mbox.exec_() == QMessageBox.Ok:
-                ipfs_api._start()
-            else:
-                self.close()
-                QTimer.singleShot(0, self.close)
-                return
+        while True:
+            try:
+                ipfs_api.wait_till_ipfs_is_running(2)
+                break
+            except:
+                conf_mbox = QMessageBox()
+                conf_mbox.setWindowTitle("Is IPFS running?")
+                conf_mbox.setText(
+                    "I can't connect to the IPFS node on this computer. Is IPFS running here?")
+                conf_mbox.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
+                if conf_mbox.exec_() == QMessageBox.Cancel:
+                    self.close()
+                    QTimer.singleShot(0, self.close)
+                    return
         self.prepublish_code_save_btn.clicked.connect(self.SavePrePublishCode)
         self.postpublish_code_save_btn.clicked.connect(
             self.SavePostPublishCode)
