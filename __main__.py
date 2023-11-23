@@ -153,7 +153,17 @@ class Main(QMainWindow, Ui_MainWindow):
         Gets called when a SiteWidget's 'Update from Path' button is pressed."""
         new_ipfs_cid = ""
         try:
-            exec(self.prepublish_codebox.toPlainText())
+            loc = {
+                "source_path": source_path,
+                "old_ipfs_cid": old_ipfs_cid,
+                "ipns_key_id": ipns_key_id,
+                "ipns_key_name": ipns_key_name,
+                "new_ipfs_cid": new_ipfs_cid
+            }
+            exec(self.prepublish_codebox.toPlainText(), globals(), loc)
+            new_ipfs_cid = loc.get('new_ipfs_cid')
+            if new_ipfs_cid:
+                print("Pre-Publish Code produced new IPFS CID, using it:", new_ipfs_cid)
         except:
             print(traceback.format_exc())
         for plugin in self.plugins:
@@ -163,6 +173,7 @@ class Main(QMainWindow, Ui_MainWindow):
                 if isinstance(result, dict):
                     if "new_ipfs_cid" in result.keys():
                         new_ipfs_cid = result["new_ipfs_cid"]
+                        print("GOT new_ipfs_cid!", new_ipfs_cid)
             except:
                 print(traceback.format_exc())
         return new_ipfs_cid

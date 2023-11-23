@@ -113,15 +113,15 @@ class Plugin(QWidget, SSHRemotePinningWidget):
         """
         if not self.TryToConnectSSH(True):  # connect via SSH to pinning computer
             return
-            # run the 'ipfs pin add cid' command on the other computer
+        # run the 'ipfs pin add cid' command on the other computer
+        stdin, stdout, stderr = self.ssh.exec_command(
+            f"ipfs pin add {new_ipfs_cid}")
+        print(stdout.read())
+        # unpin the old now outdated content (if the content changed at all)
+        if old_ipfs_cid != new_ipfs_cid:
             stdin, stdout, stderr = self.ssh.exec_command(
-                f"ipfs pin add {new_ipfs_cid}")
+                f"ipfs pin rm {old_ipfs_cid}")
             print(stdout.read())
-            # unpin the old now outdated content (if the content changed at all)
-            if old_ipfs_cid != new_ipfs_cid:
-                stdin, stdout, stderr = self.ssh.exec_command(
-                    f"ipfs pin rm {old_ipfs_cid}")
-                print(stdout.read())
 
     # AppData loading and saving ----------------------------------------------
 
@@ -160,7 +160,10 @@ class Plugin(QWidget, SSHRemotePinningWidget):
         self.test_btn.setStyleSheet("")
         if self.pinner_ip == "":
             return
-        success = self.ConnectSSH(keep_connection_open)
+        try:
+            success = self.ConnectSSH(keep_connection_open)
+        except OSError:
+            success = False
         if success:
             self.test_btn.setStyleSheet("background: rgb(20,150,20)")
         else:
