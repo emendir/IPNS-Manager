@@ -136,7 +136,7 @@ class SiteListObject(QWidget, SiteListObject):
 
     def AddSite(self, e):
         """Eventhandler for the button for creating a new IPNS key and Site"""
-        print(self)
+        # print(self)
         name, ok = QInputDialog.getText(self, 'IPNS Key', 'Enter the new Site\'s name:')
         if not ok:
             return

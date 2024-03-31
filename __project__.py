@@ -1,2 +1,2 @@
 project_name = "IPNS-Manager"
-version = "0.2.3"
+version = "0.2.4"

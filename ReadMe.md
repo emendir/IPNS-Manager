@@ -1,3 +1,5 @@
+<style>img { width: 250px;}</style>
+
 # IPNS-Manager
 IPFS-Manager is a GUI program for managing [IPFS (InterPlanetary File System)](https://ipfs.io) name keys. Its purpose is to make it easier to manage websites (and other content) hosted on IPFS with IPNS keys (IPFS Name System).
 

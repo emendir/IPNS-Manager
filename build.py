@@ -7,15 +7,19 @@ hidden_imports = [
     "multiaddr.codecs.idna",
     "multiaddr.codecs.uint16be",
 ]
+ignored_imports = [
+    "PySide2",
+    "PyQt6"
+]
 
 # converting *.ui files to *.py files
 for dirname, dirnames, filenames in os.walk("."):
-    if dirname == "./Plugins" or "./.git" in dirname:
+    if "Plugins" in dirname or ".git" in dirname:
         continue
     for filename in filenames:
         path = os.path.join(dirname, filename)
-        if(filename[-2:] == "ui"):
-            print(filename)
+        if (filename[-2:] == "ui"):
+            print("Generating python code from UIC for:", path)
             os.system(f"pyuic5 {path} -o {path[:-2]}py")
 # shutil.rmtree("dist")
 
@@ -32,6 +36,8 @@ if (platform.system().lower() == "windows"):
     cmd = f"pyinstaller --name={project_name} --windowed --onefile --add-data=IPNS-Manager-Icon.svg;. __main__.py"
     for lib in hidden_imports:
         cmd += f" --hidden-import={lib}"
+    for lib in ignored_imports:
+        cmd += f" --exclude-module={lib}"
     os.system(cmd)
     shutil.move(os.path.join("dist", f"{project_name}.exe"),
                 os.path.join("dist", f"{project_name}_v{version}_{platform.system().lower()}_{platform.machine().lower().replace('x86_64', 'amd64')}.exe"))
@@ -39,6 +45,8 @@ else:
     cmd = f"pyinstaller --name='{project_name}' --windowed --onefile --add-data='IPNS-Manager-Icon.svg:.' __main__.py"
     for lib in hidden_imports:
         cmd += f" --hidden-import={lib}"
+    for lib in ignored_imports:
+        cmd += f" --exclude-module={lib}"
     os.system(cmd)
     shutil.move(os.path.join("dist", project_name),
                 os.path.join("dist", f"{project_name}_v{version}_{platform.system().lower()}_{platform.machine().lower().replace('x86_64', 'amd64')}.AppImage"))

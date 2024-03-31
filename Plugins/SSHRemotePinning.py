@@ -90,7 +90,7 @@ class Plugin(QWidget, SSHRemotePinningWidget):
         if os.path.exists(self.host_keys_path):
             self.ssh.load_host_keys(self.host_keys_path)
         # test SSH connection using loaded settings
-        Thread(target=self.TryToConnectSSH(), args=()).start()
+        Thread(target=self.TryToConnectSSH, args=()).start()
 
     # Functions to be run when the user updates an IPNS Site ------------------
 
