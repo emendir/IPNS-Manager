@@ -1,5 +1,10 @@
 import ipfs_api
-import _thread
+from threading import Thread
+import os
+
+from datetime import datetime
+
+IPNS_RENEWAL_LEAD_HR = 24
 
 
 class Site:
@@ -22,23 +27,47 @@ class Site:
 
             def ResolveKey():
                 try:
-                    self.ipfs_cid = ipfs_api.resolve_ipns_key(self.ipns_key_id)[6:]
+                    self.ipfs_cid = ipfs_api.resolve_ipns_key(self.ipns_key_id)[
+                        6:]
                 except:
                     pass
             # resolve key on separate thread because if undefined it can take a minute
-            _thread.start_new_thread(ResolveKey, ())
+            Thread(target=ResolveKey, args=()).start()
             self.path = path
 
-    def UpdateIPNS_Record(self, new_cid=""):
+    def UpdateIPNS_Record(self, new_cid=None):
         """Publish self.path to IPFS (unless new_cid is specified)
         and update this IPNS Record to point to the new CID"""
-        print("NEW CID", new_cid)
         if new_cid:
+            print("NEW CID", new_cid)
             self.ipfs_cid = new_cid
-        else:
-            self.ipfs_cid = ipfs_api.publish(self.path)
-        _thread.start_new_thread(ipfs_api.update_ipns_record_from_hash,
-                                 (self.ipns_key_name, self.ipfs_cid, "1000h", "1000h"))
+        elif not self.ipfs_cid:
+            if os.path.exists(self.path):
+                self.ipfs_cid = ipfs_api.publish(self.path)
+        if not self.ipfs_cid:
+            print(
+                f"Warning: {self.ipns_key_name} we have no IPFS CID to update!")
+            return
+        print(self.ipns_key_name, "Updating IPNS Record")
+
+        Thread(
+            target=ipfs_api.update_ipns_record_from_cid,
+            args=(self.ipns_key_name, self.ipfs_cid, "24h", "100h"),
+            kwargs={'timeout': 300}
+        ).start()
+
+    def CheckIpnsStatus(self):
+        try:
+            expiry_date = ipfs_api.get_ipns_record_validity(self.ipns_key_id)
+            validity_remaining_hrs = (
+                expiry_date - datetime.utcnow()
+            ).total_seconds() / 3600
+        except ipfs_api.ipfshttpclient.exceptions.TimeoutError:
+            print("Caught error")
+            validity_remaining_hrs = 0
+        print(self.ipns_key_name, validity_remaining_hrs)
+        if validity_remaining_hrs < IPNS_RENEWAL_LEAD_HR:
+            self.UpdateIPNS_Record()
 
     def DeleteIPNS_Record(self):
         ipfs_api.http_client.key.rm(self.ipns_key_name)

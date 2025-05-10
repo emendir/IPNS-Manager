@@ -1,3 +1,4 @@
+from datetime import datetime
 from inspect import signature
 import ipfs_api
 import json
@@ -6,7 +7,7 @@ import shutil
 import pathlib
 import sys
 import traceback
-
+from threading import Thread
 from PyQt5.uic import loadUiType
 from PyQt5.QtWidgets import QMainWindow, QApplication, QMessageBox, QWidget, QHBoxLayout, QLabel
 from PyQt5.QtCore import Qt, QTimer, pyqtProperty, pyqtSignal, QPropertyAnimation, QRect, QSize
@@ -19,8 +20,8 @@ from Site import Site
 from SiteList.SiteListObject import SiteListObject
 import pdb
 
-
 DEBUGGING = False
+IPNS_STATUS_CHECK_INTERVAL_MIN = 30
 # move existing appdata from /IPFS/IPNS-Manager to /IPNFS-Manager
 if os.path.exists(os.path.join(appdirs.user_data_dir(), "IPFS", "IPNS-Manager")) and not os.path.exists(os.path.join(appdirs.user_data_dir(), "IPNS-Manager")):
     shutil.move(os.path.join(appdirs.user_data_dir(), "IPFS", "IPNS-Manager"),
@@ -46,32 +47,49 @@ class Main(QMainWindow, Ui_MainWindow):
         # setting icon and window title
         bundle_dir = getattr(
             sys, '_MEIPASS', os.path.abspath(os.path.dirname(__file__)))
-        self.setWindowIcon(QtGui.QIcon(os.path.join(bundle_dir, 'Icon.svg')))
+        self.setWindowIcon(QtGui.QIcon(os.path.join(
+            bundle_dir, 'IPNS-Manager-Icon.svg')))
         self.setWindowTitle("IPFS Name Manager")
 
         # Setting up GUI wait
-        self.label = QLabel(self.centralwidget)
-        self.label.setFixedSize(QSize(50, 50))
-        self.label.setGeometry(QRect(self.width() / 2 - self.label.width() / 2, self.height() / 2 - self.label.height(
-        ) / 2, self.width() / 2 - self.label.width() / 2, self.height() / 2 - self.label.height() / 2))
+        self.wait_lbl = QLabel(self.centralwidget)
+        self.wait_lbl.setFixedSize(QSize(50, 50))
+        self.wait_lbl.setGeometry(
+            QRect(
+                int(self.width() / 2 - self.wait_lbl.width() / 2),
+                int(self.height() / 2 - self.wait_lbl.height() / 2),
+                int(self.width() / 2 + self.wait_lbl.width() / 2),
+                int(self.height() / 2 + self.wait_lbl.height() / 2)
+            )
+        )
         self.movie = QMovie("GUI_wait.gif")
-        self.label.setMovie(self.movie)
-        self.label.hide()
+        self.wait_lbl.setMovie(self.movie)
+        self.movie.setScaledSize(
+            QSize(self.wait_lbl.width(), self.wait_lbl.height()))
+        self.wait_lbl.hide()
         self.gui_wait.connect(self.GUI_Wait)
         self.gui_resume.connect(self.GUI_Resume)
+
+        self.check_ipns_timer = QTimer()
+        self.check_ipns_timer.start(IPNS_STATUS_CHECK_INTERVAL_MIN*60*1000)
+        self.check_ipns_timer.timeout.connect(self.CheckIpnsStatus)
+
         # waiting till IPFS-API is opened
-        while not ipfs_api.started:
-            conf_mbox = QMessageBox()
-            conf_mbox.setWindowTitle("Is IPFS running?")
-            conf_mbox.setText(
-                "I can't connect to the IPFS node on this computer. Is IPFS running here?")
-            conf_mbox.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
-            if conf_mbox.exec_() == QMessageBox.Ok:
-                ipfs_api._start()
-            else:
-                self.close()
-                QTimer.singleShot(0, self.close)
-                return
+        while True:
+            try:
+                ipfs_api.wait_till_ipfs_is_running(2)
+                break
+            except:
+                conf_mbox = QMessageBox()
+                conf_mbox.setWindowTitle("Is IPFS running?")
+                conf_mbox.setText(
+                    "I can't connect to the IPFS node on this computer. Is IPFS running here?")
+                conf_mbox.setStandardButtons(
+                    QMessageBox.Ok | QMessageBox.Cancel)
+                if conf_mbox.exec_() == QMessageBox.Cancel:
+                    self.close()
+                    QTimer.singleShot(0, self.close)
+                    return
         self.prepublish_code_save_btn.clicked.connect(self.SavePrePublishCode)
         self.postpublish_code_save_btn.clicked.connect(
             self.SavePostPublishCode)
@@ -115,6 +133,11 @@ class Main(QMainWindow, Ui_MainWindow):
         except:
             return list()
 
+    def CheckIpnsStatus(self):
+        for site_wg in self.projectslist.sites:
+            site: Site = site_wg.site
+            Thread(target=site.CheckIpnsStatus, args=()).start()
+
     def LoadPrePublishCode(self):
         """Loads the user's custom code for execution on every IPNS publish from appdata."""
         prepublish_codefile_path = os.path.join(
@@ -151,7 +174,17 @@ class Main(QMainWindow, Ui_MainWindow):
         Gets called when a SiteWidget's 'Update from Path' button is pressed."""
         new_ipfs_cid = ""
         try:
-            exec(self.prepublish_codebox.toPlainText())
+            loc = {
+                "source_path": source_path,
+                "old_ipfs_cid": old_ipfs_cid,
+                "ipns_key_id": ipns_key_id,
+                "ipns_key_name": ipns_key_name,
+                "new_ipfs_cid": new_ipfs_cid
+            }
+            exec(self.prepublish_codebox.toPlainText(), globals(), loc)
+            new_ipfs_cid = loc.get('new_ipfs_cid')
+            if new_ipfs_cid:
+                print("Pre-Publish Code produced new IPFS CID, using it:", new_ipfs_cid)
         except:
             print(traceback.format_exc())
         for plugin in self.plugins:
@@ -161,6 +194,7 @@ class Main(QMainWindow, Ui_MainWindow):
                 if isinstance(result, dict):
                     if "new_ipfs_cid" in result.keys():
                         new_ipfs_cid = result["new_ipfs_cid"]
+                        print("GOT new_ipfs_cid!", new_ipfs_cid)
             except:
                 print(traceback.format_exc())
         return new_ipfs_cid
@@ -217,17 +251,25 @@ class Main(QMainWindow, Ui_MainWindow):
 
     def GUI_Wait(self):
         self.main_widget_tlbx.setEnabled(False)
-        self.label.show()
+        self.wait_lbl.show()
         self.movie.start()
 
     def GUI_Resume(self):
         self.movie.stop()
-        self.label.hide()
+        self.wait_lbl.hide()
         self.main_widget_tlbx.setEnabled(True)
 
     def resizeEvent(self, e):
-        self.label.setGeometry(QRect(self.width() / 2 - self.label.width() / 2, self.height() / 2 - self.label.height(
-        ) / 2, self.width() / 2 - self.label.width() / 2, self.height() / 2 - self.label.height() / 2))
+        self.wait_lbl.setGeometry(
+            QRect(
+                int(self.width() / 2 - self.wait_lbl.width() / 2),
+                int(self.height() / 2 - self.wait_lbl.height() / 2),
+                int(self.width() / 2 + self.wait_lbl.width() / 2),
+                int(self.height() / 2 + self.wait_lbl.height() / 2)
+            )
+        )
+        self.movie.setScaledSize(
+            QSize(self.wait_lbl.width(), self.wait_lbl.height()))
 
 
 app = QApplication(sys.argv)

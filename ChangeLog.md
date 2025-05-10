@@ -1,3 +1,7 @@
+# v0.2.4 (2024-03-31)
+- added loading symbol while publishing
+- added automatic republish of sites when their IPNS record validity comes close to expiry
+
 # v0.2.2 (2022-09-12)
 - added feature to pre-publish plugins that allows them to specify an IPFS CID for the Site, overriding the Site-source-path
 

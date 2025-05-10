@@ -1,3 +1,5 @@
+<style>img { width: 10px;}</style>
+
 # IPNS-Manager
 IPFS-Manager is a GUI program for managing [IPFS (InterPlanetary File System)](https://ipfs.io) name keys. Its purpose is to make it easier to manage websites (and other content) hosted on IPFS with IPNS keys (IPFS Name System).
 
@@ -46,8 +48,8 @@ Make sure IPFS is running on your computer before you run this program.
 - Click the "Update from Source" button to upload the Site source to IPFS and assgn it to the IPNS key.
 - You can view the Site on IPFS in your browser by clicking one of the "Open in Browser" buttons. The upper button opens the Site using its CID, wheras the lower button opens the Site using its IPNS key (which may take a longer time to load).
 
-![](Screenshots/NewSite.png)
-![](Screenshots/AddedSource.png)
+![](./Screenshots/NewSite.png)
+![](./Screenshots/AddedSource.png)
 
 # Extending Functionality
 INS-Manager has two different features that allow you to extend its functionality: __custom code__ and __plugins__.  
